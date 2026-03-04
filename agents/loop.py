@@ -15,8 +15,7 @@ from tools.hueristics import run_all_heuristics
 from agents.tools_definitions import TOOL_REGISTRY, AGENT_GUIDELINES
 
 
-llm = ChatGroq(model="llama-3.1-8b-instant", temperature=0)
-sanctioned_set = load_sanctioned_addresses()
+
 
 
 class InvestigationState(TypedDict):
@@ -194,7 +193,9 @@ def route_after_fetch(state):
 # GRAPH
 # ===============================
 def build_agent():
-
+    global llm, sanctioned_set
+    llm = ChatGroq(model="llama-3.1-8b-instant", temperature=0)
+    sanctioned_set = load_sanctioned_addresses()
     wf = StateGraph(InvestigationState)
 
     wf.add_node("investigate", investigate_address)
