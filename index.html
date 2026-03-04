@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Crypto Intel</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;700&display=swap');
+
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --border: #222;
+    --green: #00ff88;
+    --dim: #444;
+    --text: #e0e0e0;
+    --muted: #666;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 20px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  header h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 2rem;
+    letter-spacing: 0.15em;
+    color: var(--green);
+    text-transform: uppercase;
+  }
+
+  header p {
+    color: var(--muted);
+    font-size: 0.75rem;
+    margin-top: 8px;
+    letter-spacing: 0.1em;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    max-width: 680px;
+    margin-bottom: 40px;
+  }
+
+  input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.85rem;
+    padding: 12px 16px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input:focus { border-color: var(--green); }
+  input::placeholder { color: var(--dim); }
+
+  button {
+    background: var(--green);
+    color: #000;
+    border: none;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    padding: 12px 24px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: opacity 0.2s;
+  }
+
+  button:hover { opacity: 0.85; }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .output {
+    width: 100%;
+    max-width: 680px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px;
+  }
+
+  .block-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .score-line {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+
+  .score-number {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: var(--green);
+    line-height: 1;
+  }
+
+  .score-level {
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    padding: 3px 8px;
+    border: 1px solid;
+  }
+
+  .level-LOW    { color: #00ff88; border-color: #00ff88; }
+  .level-MEDIUM { color: #ffcc00; border-color: #ffcc00; }
+  .level-HIGH   { color: #ff8800; border-color: #ff8800; }
+  .level-CRITICAL { color: #ff3333; border-color: #ff3333; }
+
+  .flags {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .flag {
+    font-size: 0.75rem;
+    color: #ffcc00;
+    padding: 6px 10px;
+    border-left: 2px solid #ffcc00;
+    background: rgba(255,204,0,0.04);
+    word-break: break-word;
+  }
+
+  .no-flags {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .report-text {
+    font-size: 0.78rem;
+    line-height: 1.75;
+    color: var(--text);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .wallets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .wallet-tag {
+    font-size: 0.7rem;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 3px 8px;
+  }
+
+  .log {
+    font-size: 0.72rem;
+    color: var(--muted);
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--green);
+    background: rgba(0,255,136,0.02);
+    white-space: pre-wrap;
+  }
+
+  .spinner {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border: 2px solid #000;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .error {
+    color: #ff4444;
+    font-size: 0.8rem;
+    padding: 12px;
+    border: 1px solid #ff444433;
+    background: rgba(255,68,68,0.05);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Crypto Intel</h1>
+  <p>Blockchain Fraud Investigation Agent</p>
+</header>
+
+<div class="input-row">
+  <input id="addr" type="text" placeholder="0x... Ethereum address" spellcheck="false" />
+  <button id="btn" onclick="investigate()">Investigate</button>
+</div>
+
+<div class="output" id="output"></div>
+
+<script>
+  const API = ""; 
+
+  async function investigate() {
+    const addr = document.getElementById("addr").value.trim();
+    const out   = document.getElementById("output");
+    const btn   = document.getElementById("btn");
+
+    if (!addr.startsWith("0x") || addr.length !== 42) {
+      out.innerHTML = `<div class="error">Invalid Ethereum address. Must be 42 chars starting with 0x.</div>`;
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner"></span>Running`;
+    out.innerHTML = `<div class="log">[ Initializing investigation for ${addr} ]\n[ Fetching transactions... this may take 30–60s ]</div>`;
+
+    try {
+      const res = await fetch(`${API}/investigate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ wallet: addr })
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.detail || "Server error");
+      }
+
+      const data = await res.json();
+      renderResult(data);
+
+    } catch (e) {
+      out.innerHTML = `<div class="error">Error: ${e.message}</div>`;
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = "Investigate";
+    }
+  }
+
+  function riskLevel(score) {
+    if (score >= 80) return "CRITICAL";
+    if (score >= 50) return "HIGH";
+    if (score >= 20) return "MEDIUM";
+    return "LOW";
+  }
+
+  function renderResult(data) {
+    const out   = document.getElementById("output");
+    const level = riskLevel(data.risk_score);
+
+    const flagsHtml = data.flags.length
+      ? data.flags.map(f => `<div class="flag">${f}</div>`).join("")
+      : `<div class="no-flags">No flags triggered.</div>`;
+
+    const walletsHtml = (data.investigated || [])
+      .map(w => `<div class="wallet-tag">${w}</div>`).join("");
+
+    out.innerHTML = `
+      <div class="block">
+        <div class="block-label">Risk Score</div>
+        <div class="score-line">
+          <div class="score-number">${data.risk_score}<span style="font-size:1rem;color:var(--muted)">/100</span></div>
+          <div class="score-level level-${level}">${level}</div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-label">Flags (${data.flags.length})</div>
+        <div class="flags">${flagsHtml}</div>
+      </div>
+
+      <div class="block">
+        <div class="block-label">Report</div>
+        <div class="report-text">${data.report}</div>
+      </div>
+
+      ${walletsHtml ? `
+      <div class="block">
+        <div class="block-label">Wallets Analyzed (${data.wallets_analyzed})</div>
+        <div class="wallets">${walletsHtml}</div>
+      </div>` : ""}
+    `;
+  }
+
+  document.getElementById("addr").addEventListener("keydown", e => {
+    if (e.key === "Enter") investigate();
+  });
+</script>
+</body>
+</html>

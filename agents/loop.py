@@ -12,7 +12,6 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from tools.etherscan import get_transactions, get_all_transactions,parse_transactions, get_token_transfers, get_internal_transactions
 from tools.sanctions import load_sanctioned_addresses, is_sanctioned
 from tools.hueristics import run_all_heuristics
-from graph.builder import build_graph, visualize_graph
 from agents.tools_definitions import TOOL_REGISTRY, AGENT_GUIDELINES
 
 
@@ -179,9 +178,6 @@ Explain findings and recommended action.
         for tx in txs
     ]
 
-    if all_txs:
-        G = build_graph(all_txs)
-        visualize_graph(G, target)
 
     state["risk_score"] = score
     state["flags"] = flags
@@ -226,7 +222,7 @@ if __name__ == "__main__":
     agent = build_agent()
 
     result = agent.invoke({
-        "target":            "0x2FAF487A4414Fe77e2327F0bf4AE2a264a776AD2",
+        "target":            "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
         "hop":               0,
         "investigated":      [],
         "all_txs":           {},
